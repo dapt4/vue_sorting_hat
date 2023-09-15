@@ -1,12 +1,14 @@
 <template>
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/">Chat</router-link> |
+    <router-link to="/result">Result</router-link>
   </nav>
   <router-view/>
 </template>
 
 <style lang="scss">
+@import 'styles/colors.scss';
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -23,7 +25,7 @@ nav {
     color: #2c3e50;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: $blue-hex;
     }
   }
 }
