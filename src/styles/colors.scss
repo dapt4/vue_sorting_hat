@@ -4,6 +4,8 @@ $brown-hex: #751807;
 $gray-hex: #6F6C78;
 $blue-hex: #5272E8;
 $green-hex: #078F2A;
+$ligth-green-hex: lighten($color: $green-hex, $amount: 50);
+$ligth-blue-hex: lighten($color: $blue-hex, $amount: 30);
 
 /* Color Theme Swatches in RGBA */
 $yellow-rgba: rgba(255,170,13, 1);

@@ -1,24 +1,37 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <!--<img alt="Vue logo" src="../assets/Slytherin.webp">-->
+  <section class="chatContainer">
+    <div class="chatBox">
+      <Message text="Greetings, tell me your name" :question="true" />
+    </div>
+    <div class="chatBox">
+      <Message text="Diego Perozo" :question="false" />
+    </div>
+    <ChatInput/>
+  </section>
   <ul>
-    <li v-for="(value, key) in scoresObject" :key="key">{{key}}: {{value}}</li>
+    <li v-for="(value, key) in scoresObject" :key="key">
+      {{ key }}: {{ value }}
+    </li>
   </ul>
   <button @click="addPoints">add points</button>
-  <div v-if="winner">Winner: {{winner}}</div>
+  <div v-if="winner">Winner: {{ winner }}</div>
   <button @click="getWinner">get winner</button>
   <ul>
-    <li v-for="(value, index) of questionsObject" :key="index">{{value.title}}</li>
+    <li v-for="(value, index) of questionsObject" :key="index">
+      {{ value.title }}
+    </li>
   </ul>
 
   <button @click="addQuestion">add question</button>
+  <button @click="getName">name</button>
+  <span>{{ userName }}</span>
 </template>
 
 <script setup>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import Message from '@/components/Message.vue'
+import ChatInput from '@/components/ChatInput.vue'
 import { ref, onMounted } from 'vue'
 import store from '@/store'
 
@@ -51,14 +64,22 @@ function * getIndex () {
 const generator = getIndex()
 
 const addQuestion = () => {
-  questionsObject.value.push(store.getters.getQuestionByIndex(generator.next().value))
+  questionsObject.value.push(
+    store.getters.getQuestionByIndex(generator.next().value)
+  )
 }
 
 const getQuestionData = async () => {
-  const url = 'https://gist.githubusercontent.com/Xowap/b01fbce0c23971e23ab28427c09f92b3/raw/ad6399bd659679ff1f3209c2549a359d9cb744fd/sorting_hat.json'
+  const url =
+    'https://gist.githubusercontent.com/Xowap/b01fbce0c23971e23ab28427c09f92b3/raw/ad6399bd659679ff1f3209c2549a359d9cb744fd/sorting_hat.json'
   const res = await fetch(url)
   const json = await res.json()
   store.commit('storeQuestions', json)
+}
+
+const userName = ref('')
+const getName = () => {
+  userName.value = store.getters.getUserName
 }
 
 onMounted(async () => {
@@ -66,3 +87,35 @@ onMounted(async () => {
 })
 
 </script>
+<style lang="scss" scoped>
+@import "@/styles/main.scss";
+
+.chatContainer {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-image: url("../assets/chat_pattern.png");
+  background-size: auto;
+  background-repeat: repeat;
+  padding-top: 20px;
+  .chatBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 90%;
+    margin: 20px auto;
+    @include media-sm {
+      width: 70px;
+    }
+    @include media-md {
+      width: 60%;
+    }
+    @include media-lg {
+      width: 50%;
+    }
+    @include media-xl {
+      width: 40%;
+    }
+  }
+}
+</style>

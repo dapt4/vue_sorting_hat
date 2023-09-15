@@ -1,0 +1,52 @@
+//breakpoints 
+$xs: 0;
+$sm: 576px;
+$md: 768px;
+$lg: 992px;
+$xl: 1200px;
+$xxl: 1400px;
+$xxxl: 1600px;
+
+
+//breakpoints
+@mixin media-xs {
+    @media only screen and (min-width: $xs) {
+        @content;
+    }
+}
+
+@mixin media-sm {
+    @media only screen and (min-width: $sm) {
+        @content;
+    }
+}
+
+@mixin media-md {
+    @media only screen and (min-width: $md) {
+        @content;
+    }
+}
+
+@mixin media-lg {
+    @media only screen and (min-width: $lg) {
+        @content;
+    }
+}
+
+@mixin media-xl {
+    @media only screen and (min-width: $xl) {
+        @content;
+    }
+}
+
+@mixin media-xxl {
+    @media only screen and (min-width: $xxl) {
+        @content;
+    }
+}
+
+@mixin media-xxxl {
+    @media only screen and (min-width: $xxxl) {
+        @content;
+    }
+}

@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
+    userName: '',
     questions: [
       {
         title: 'Dawn or dusk?',
@@ -58,6 +59,9 @@ export default createStore({
     }
   },
   getters: {
+    getUserName (state) {
+      return state.userName
+    },
     getQuestionByIndex (state) {
       return (index) => state.questions[index]
     },
@@ -74,6 +78,9 @@ export default createStore({
     }
   },
   mutations: {
+    setUserName (state, name) {
+      state.userName = name
+    },
     storeQuestions (state, questions) {
       state.questions = questions
     },

@@ -6,37 +6,41 @@
         {{ assigned }}
       </span>
     </h1>
-    <img :src="shield" alt="no image" />
+    <img :src="requireImage(assigned)" alt="no image">
+    <div class="userName">
+      <span>{{userName}}</span>
+    </div>
   </div>
 </template>
 <script setup>
 import store from '@/store'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 const isAssigned = ref(false)
 const assigned = ref('')
-const shield = ref('')
+
+const requireImage = name => require(`@/assets/${name}.webp`)
+const userName = ref(store.getters.getUserName)
+
+const relations = {
+  g: 'Gryffindor',
+  h: 'Hufflepuff',
+  r: 'Ravenclaw',
+  s: 'Slytherin'
+}
 
 const getWinner = () => {
   const winner = store.getters.getHighestScore
   isAssigned.value = true
-  if (winner === 'g') {
-    assigned.value = 'Gryffindor'
-    shield.value = '../assets/logo.png'
-  } else if (winner === 'h') {
-    assigned.value = 'Hufflepuff'
-    shield.value = '../assets/hufflepuff.webp'
-  } else if (winner === 'r') {
-    assigned.value = 'Ravenclaw'
-    shield.value = '../assets/ravenclaw.webp'
-  } else if (winner === 's') {
-    assigned.value = 'Slytherin'
-    shield.value = '../assets/slytherin.webp'
-  }
+  assigned.value = relations[winner]
 }
-getWinner()
+
+onMounted(() => {
+  getWinner()
+})
+
 </script>
 <style lang="scss" scoped>
-@import "@/styles/colors.scss";
+@import "@/styles/main.scss";
 
 .congratulations {
   display: block;
@@ -50,6 +54,14 @@ getWinner()
 span {
   font-size: 2em;
   font-weight: bold;
+}
+div.userName{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span{
+    font-size: 1em;
+  }
 }
 .Gryffindor {
   color: $brown-hex;
