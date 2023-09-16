@@ -3,67 +3,34 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     userName: '',
-    questions: [
-      {
-        title: 'Dawn or dusk?',
-        answers: [
-          {
-            title: 'Dawn',
-            scores: {
-              g: 100,
-              r: 100,
-              h: 0,
-              s: 0
-            }
-          },
-          {
-            title: 'Dusk',
-            scores: {
-              g: 0,
-              r: 0,
-              h: 100,
-              s: 100
-            }
-          }
-        ]
-      },
-      {
-        title: 'Forest or river?',
-        answers: [
-          {
-            title: 'Forest',
-            scores: {
-              g: 100,
-              r: 100,
-              h: 0,
-              s: 0
-            }
-          },
-          {
-            title: 'River',
-            scores: {
-              g: 0,
-              r: 0,
-              h: 100,
-              s: 100
-            }
-          }
-        ]
-      }
-    ],
+    questions: [],
     scores: {
       g: 0,
       h: 0,
       r: 0,
       s: 0
-    }
+    },
+    dialogs: [],
+    answers: []
   },
   getters: {
+    getDialogs (state) {
+      return state.dialogs
+    },
     getUserName (state) {
       return state.userName
     },
+    getQuestions (state) {
+      return state.questions
+    },
     getQuestionByIndex (state) {
-      return (index) => state.questions[index]
+      return (index) => {
+        if (state.questions.length - 1 !== index) {
+          return state.questions[index]
+        } else {
+          return null
+        }
+      }
     },
     getScores (state) {
       return state.scores
@@ -78,6 +45,12 @@ export default createStore({
     }
   },
   mutations: {
+    addAnswer (state, answer) {
+      state.answers.push(answer)
+    },
+    addDialog (state, dialog) {
+      state.dialogs.push(dialog)
+    },
     setUserName (state, name) {
       state.userName = name
     },

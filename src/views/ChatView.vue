@@ -4,58 +4,32 @@
     <div class="chatBox">
       <Message text="Greetings, tell me your name" :question="true" />
     </div>
-    <div class="chatBox">
-      <Message text="Diego Perozo" :question="false" />
+    <div class="chatBox" v-for="(dialog, index) of dialogueState" :key="index">
+      <Message :text="dialog.title" :question="questionChecker(dialog)" />
+    </div>
+    <div class="answerButtons" v-if="answerButtons.length > 0">
+      <button v-for="(answer, index) of answerButtons" :key="index" @click="sendAnswer(answer)">{{answer.title}}</button>
     </div>
     <ChatInput/>
   </section>
-  <ul>
-    <li v-for="(value, key) in scoresObject" :key="key">
-      {{ key }}: {{ value }}
-    </li>
-  </ul>
-  <button @click="addPoints">add points</button>
-  <div v-if="winner">Winner: {{ winner }}</div>
-  <button @click="getWinner">get winner</button>
-  <ul>
-    <li v-for="(value, index) of questionsObject" :key="index">
-      {{ value.title }}
-    </li>
-  </ul>
-
-  <button @click="addQuestion">add question</button>
-  <button @click="getName">name</button>
-  <span>{{ userName }}</span>
 </template>
 
 <script setup>
 // @ is an alias to /src
 import Message from '@/components/Message.vue'
 import ChatInput from '@/components/ChatInput.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import store from '@/store'
+import router from '@/router'
 
-const scoresObject = ref(store.getters.getScores)
-const questionsObject = ref([])
-const winner = ref('')
+const dialogueState = ref(store.getters.getDialogs)
+const dialogsArray = ref([])
+const answerButtons = ref([])
 
-const addPoints = () => {
-  const scores = {
-    g: Math.floor(Math.random() * 10),
-    h: Math.floor(Math.random() * 10),
-    r: Math.floor(Math.random() * 10),
-    s: Math.floor(Math.random() * 10)
-  }
-  store.commit('setScores', scores)
-}
-
-const getWinner = () => {
-  winner.value = store.getters.getHighestScore
-}
+const questionChecker = (obj) => !!Object.prototype.hasOwnProperty.call(obj, 'answers')
 
 function * getIndex () {
   let index = 0
-
   while (true) {
     yield index++
   }
@@ -64,9 +38,18 @@ function * getIndex () {
 const generator = getIndex()
 
 const addQuestion = () => {
-  questionsObject.value.push(
-    store.getters.getQuestionByIndex(generator.next().value)
-  )
+  const dialog = store.getters.getQuestionByIndex(generator.next().value)
+  if (!dialog) return router.push('/result')
+  store.commit('addDialog', dialog)
+  dialogsArray.value.push(dialog)
+  answerButtons.value = dialog.answers
+}
+
+const sendAnswer = (answer) => {
+  answerButtons.value = []
+  store.commit('addDialog', answer)
+  store.commit('setScores', answer.scores)
+  addQuestion()
 }
 
 const getQuestionData = async () => {
@@ -75,12 +58,12 @@ const getQuestionData = async () => {
   const res = await fetch(url)
   const json = await res.json()
   store.commit('storeQuestions', json)
+  console.log({ getQuestions: store.getters.getQuestions })
 }
 
-const userName = ref('')
-const getName = () => {
-  userName.value = store.getters.getUserName
-}
+watch(store.state.answers, () => {
+  addQuestion()
+})
 
 onMounted(async () => {
   await getQuestionData()
@@ -92,7 +75,7 @@ onMounted(async () => {
 
 .chatContainer {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
   background-image: url("../assets/chat_pattern.png");
   background-size: auto;
@@ -116,6 +99,9 @@ onMounted(async () => {
     @include media-xl {
       width: 40%;
     }
+  }
+  .answerButtons{
+    margin-bottom: 110px;
   }
 }
 </style>
