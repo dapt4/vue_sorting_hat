@@ -1,15 +1,12 @@
 <template>
   <div class="messageBox" :class="[props.question ? '' : 'answer']">
-    <!--<Tail v-if="props.question === true" :question="true" />-->
     <div class="messageBox_content" :class="[props.question ? 'question' : '']">
       <span class="messageBox_content--message">{{ props.text }}</span>
       <span class="messageBox_content--time">{{ time }}</span>
     </div>
-    <!--<Tail v-if="props.question === false" :question="false" />-->
   </div>
 </template>
 <script setup>
-/* import Tail from './Tail.vue' */
 import { ref, defineProps, onMounted } from 'vue'
 
 const props = defineProps({
@@ -42,6 +39,7 @@ onMounted(() => getTime())
     border-radius: 17px;
     box-shadow: 1px 1px 1px gray;
     background-color: $ligth-blue-hex;
+    text-align: left;
     &.question {
       background-color: $ligth-green-hex;
     }

@@ -26,8 +26,12 @@
 
 nav.navbar {
   width: 100%;
-  padding: 20px;
-  background-color: #000;
+  padding: 20px 0px;
+  background-color: #222;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 999;
   .isotipo{
     width: 30px;
     height: auto;

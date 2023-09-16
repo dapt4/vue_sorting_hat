@@ -8,9 +8,16 @@
       <Message :text="dialog.title" :question="questionChecker(dialog)" />
     </div>
     <div class="answerButtons" v-if="answerButtons.length > 0">
-      <button v-for="(answer, index) of answerButtons" :key="index" @click="sendAnswer(answer)">{{answer.title}}</button>
+      <button
+        class="answerButtons_btn"
+        v-for="(answer, index) of answerButtons"
+        :key="index"
+        @click="sendAnswer(answer)"
+      >
+        {{ answer.title }}
+      </button>
     </div>
-    <ChatInput/>
+    <ChatInput />
   </section>
 </template>
 
@@ -26,7 +33,8 @@ const dialogueState = ref(store.getters.getDialogs)
 const dialogsArray = ref([])
 const answerButtons = ref([])
 
-const questionChecker = (obj) => !!Object.prototype.hasOwnProperty.call(obj, 'answers')
+const questionChecker = (obj) =>
+  !!Object.prototype.hasOwnProperty.call(obj, 'answers')
 
 function * getIndex () {
   let index = 0
@@ -37,12 +45,14 @@ function * getIndex () {
 
 const generator = getIndex()
 
-const addQuestion = () => {
+const addQuestion = async () => {
   const dialog = store.getters.getQuestionByIndex(generator.next().value)
   if (!dialog) return router.push('/result')
   store.commit('addDialog', dialog)
   dialogsArray.value.push(dialog)
   answerButtons.value = dialog.answers
+  const totalHeight = await document.documentElement.scrollHeight
+  window.scrollTo({ top: totalHeight, behavior: 'smooth' })
 }
 
 const sendAnswer = (answer) => {
@@ -58,7 +68,6 @@ const getQuestionData = async () => {
   const res = await fetch(url)
   const json = await res.json()
   store.commit('storeQuestions', json)
-  console.log({ getQuestions: store.getters.getQuestions })
 }
 
 watch(store.state.answers, () => {
@@ -67,20 +76,35 @@ watch(store.state.answers, () => {
 
 onMounted(async () => {
   await getQuestionData()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 })
-
 </script>
 <style lang="scss" scoped>
 @import "@/styles/main.scss";
 
 .chatContainer {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
+  height: 100%;
   position: relative;
-  background-image: url("../assets/chat_pattern.png");
+  background-image: url("../assets/chat_pattern.png"),
+    linear-gradient(
+      135deg,
+      rgba(7, 143, 42, 0.3) 0%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(7, 143, 42, 0.30015756302521013) 100%
+    );
   background-size: auto;
   background-repeat: repeat;
-  padding-top: 20px;
+  background-attachment: fixed;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin-top: 76px;
+  -ms-overflow-style: none; /* ie, edge */
+  scrollbar-width: none; /* firefox */
+  &::-webkit-scrollbar {
+    display: none; /* chrome */
+  }
   .chatBox {
     display: flex;
     flex-direction: column;
@@ -100,8 +124,67 @@ onMounted(async () => {
       width: 40%;
     }
   }
-  .answerButtons{
+  .answerButtons {
+    display: flex;
+    width: 90%;
+    margin: 20px auto;
+    flex-wrap: wrap;
     margin-bottom: 110px;
+    justify-content: center;
+    gap: 20px;
+    @include media-sm {
+      width: 70px;
+    }
+    @include media-md {
+      width: 60%;
+    }
+    @include media-lg {
+      width: 50%;
+    }
+    @include media-xl {
+      width: 40%;
+    }
+    &_btn {
+      align-items: center;
+      appearance: none;
+      background-color: #fcfcfd;
+      border-radius: 4px;
+      border-width: 0;
+      box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,
+        rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+      box-sizing: border-box;
+      color: #36395a;
+      cursor: pointer;
+      display: inline-flex;
+      min-height: 48px;
+      justify-content: center;
+      line-height: 1;
+      list-style: none;
+      overflow: hidden;
+      padding: 16px;
+      position: relative;
+      text-align: left;
+      text-decoration: none;
+      transition: box-shadow 0.15s, transform 0.15s;
+      user-select: none;
+      -webkit-user-select: none;
+      white-space: wrap;
+      will-change: box-shadow, transform;
+      font-size: 18px;
+      &:focus {
+        box-shadow: #d6d6e7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px,
+          rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+      }
+      &:hover {
+        box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px,
+          rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+        transform: translateY(-2px);
+      }
+      &:active {
+        box-shadow: #d6d6e7 0 3px 7px inset;
+        transform: translateY(2px);
+      }
+    }
   }
 }
 </style>

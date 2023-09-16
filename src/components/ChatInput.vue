@@ -1,7 +1,9 @@
 <template>
   <div class="chatInput">
     <div class="chatInput_container">
-      <input type="text" placeholder="Message" v-model="input" />
+      <form @submit.prevent="sendInputText">
+        <input type="text" placeholder="Message" v-model="input" />
+      </form>
     </div>
     <button @click="sendInputText">&#10148;</button>
   </div>
@@ -42,14 +44,17 @@ const sendInputText = () => {
     border-radius: 17px;
     border: 1px solid #ccc;
     justify-content: center;
-    align-items: center;
-    input {
-      width: 80%;
-      height: 40px;
-      border: none;
-      border-bottom: 1px solid #ccc;
-      &:focus {
-        outline: none;
+   align-items: center;
+    form {
+      width: 100%;
+      input {
+        width: 80%;
+        height: 40px;
+        border: none;
+        border-bottom: 1px solid #ccc;
+        &:focus {
+          outline: none;
+        }
       }
     }
   }
