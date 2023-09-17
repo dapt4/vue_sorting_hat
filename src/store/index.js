@@ -30,7 +30,7 @@ export default createStore({
     },
     getQuestionByIndex (state) {
       return (index) => {
-        if (state.questions.length - 1 !== index) {
+        if (state.questions.length !== index) {
           return state.questions[index]
         } else {
           return null
