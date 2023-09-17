@@ -1,4 +1,9 @@
-# frontend
+# frontend technical test
+
+## interpreter
+```
+nodejs >= 16
+```
 
 ## Project setup
 ```

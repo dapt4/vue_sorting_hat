@@ -2,7 +2,7 @@
   <div class="chatInput">
     <div class="chatInput_container">
       <form @submit.prevent="sendInputText">
-        <input type="text" placeholder="Message" v-model="input" />
+        <input type="text" placeholder="Message" v-model="input" v-focus/>
       </form>
     </div>
     <button @click="sendInputText">&#10148;</button>
@@ -19,39 +19,61 @@ const sendInputText = () => {
     store.commit('setUserName', input.value)
     store.commit('addDialog', { title: input.value })
     store.commit('addAnswer', input.value)
-    console.log({ dialogsInput: store.getters.getDialogs })
   }
   input.value = ''
 }
+
+// enables v-focus in templates
+const vFocus = {
+  mounted: (el) => el.focus()
+}
+
 </script>
 <style lang="scss" scoped>
 @import "@/styles/main.scss";
 
 .chatInput {
   display: flex;
-  width: 100%;
+  width: 100vw;
   height: 60px;
   position: fixed;
   bottom: 10px;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
   &_container {
     display: flex;
-    width: 50%;
+    width: 90%;
     height: 100%;
     background-color: #fff;
     border-radius: 17px;
     border: 1px solid #ccc;
     justify-content: center;
-   align-items: center;
+    align-items: center;
+    @include media-sm {
+      width: 80%;
+    }
+    @include media-md {
+      width: 70%;
+    }
+    @include media-lg {
+      width: 60%;
+    }
+    @include media-xl {
+      width: 50%;
+    }
+    @include media-xxl{
+      width: 40%;
+    }
+    @include media-xxxl{
+      width: 30%;
+    }
     form {
       width: 100%;
       input {
-        width: 80%;
-        height: 40px;
+        width: 90%;
+        height: 60px;
         border: none;
-        border-bottom: 1px solid #ccc;
         &:focus {
           outline: none;
         }

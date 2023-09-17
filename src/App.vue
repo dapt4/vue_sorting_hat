@@ -1,13 +1,10 @@
 <template>
   <nav class="navbar">
-    <!--<router-link to="/">Chat</router-link> |
-    <router-link to="/result">Result</router-link>-->
     <img class="isotipo" src="./assets/hat.png" alt="image hat">
     <span class="logo">The Sorting Hat</span>
   </nav>
   <router-view />
 </template>
-
 <style lang="scss">
 @import "styles/main.scss";
 
@@ -31,7 +28,7 @@ nav.navbar {
   position: fixed;
   top: 0px;
   left: 0px;
-  z-index: 999;
+  z-index: 9;
   .isotipo{
     width: 30px;
     height: auto;

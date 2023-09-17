@@ -15,7 +15,6 @@ const props = defineProps({
 })
 
 const time = ref('')
-
 const getTime = () => {
   const date = new Date()
   time.value = `${date.getHours()}:${date.getMinutes()}`
@@ -40,13 +39,25 @@ onMounted(() => getTime())
     box-shadow: 1px 1px 1px gray;
     background-color: $ligth-blue-hex;
     text-align: left;
+    padding: 15px;
+    animation-name: messageAnimation;
+    animation-duration: 500ms;
+    @keyframes messageAnimation {
+      from {
+        top: -100px;
+        opacity: 0;
+      }
+      to {
+        top: 0;
+        opacity: 1;
+      }
+    }
     &.question {
       background-color: $ligth-green-hex;
     }
     &--message {
       width: fit-content;
       max-width: 50%;
-      padding: 15px;
     }
     &--time {
       position: absolute;

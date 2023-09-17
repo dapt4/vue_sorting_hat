@@ -1,5 +1,4 @@
 <template>
-  <!--<img alt="Vue logo" src="../assets/Slytherin.webp">-->
   <section class="chatContainer">
     <div class="chatBox">
       <Message text="Greetings, tell me your name" :question="true" />
@@ -7,16 +6,20 @@
     <div class="chatBox" v-for="(dialog, index) of dialogueState" :key="index">
       <Message :text="dialog.title" :question="questionChecker(dialog)" />
     </div>
-    <div class="answerButtons" v-if="answerButtons.length > 0">
+    <div class="answerButtons">
       <button
         class="answerButtons_btn"
         v-for="(answer, index) of answerButtons"
-        :key="index"
+        :key="answer.title.slice(1, 5)"
+        :data-index="index"
         @click="sendAnswer(answer)"
       >
         {{ answer.title }}
       </button>
     </div>
+    <router-link class="result" to="/result" v-if="finished">
+      <button>Go to Result</button>
+    </router-link>
     <ChatInput />
   </section>
 </template>
@@ -30,12 +33,13 @@ import store from '@/store'
 import router from '@/router'
 
 const dialogueState = ref(store.getters.getDialogs)
-const dialogsArray = ref([])
-const answerButtons = ref([])
+const answerButtons = ref(store.getters.getButtons)
+const finished = ref(store.getters.getFinished)
 
 const questionChecker = (obj) =>
   !!Object.prototype.hasOwnProperty.call(obj, 'answers')
 
+// generates indexes infinitely
 function * getIndex () {
   let index = 0
   while (true) {
@@ -43,22 +47,25 @@ function * getIndex () {
   }
 }
 
+// generator instance
 const generator = getIndex()
-
 const addQuestion = async () => {
   const dialog = store.getters.getQuestionByIndex(generator.next().value)
-  if (!dialog) return router.push('/result')
+  if (!dialog) {
+    finished.value = true
+    store.commit('finish')
+    return router.push('/result')
+  }
   store.commit('addDialog', dialog)
-  dialogsArray.value.push(dialog)
   answerButtons.value = dialog.answers
   const totalHeight = await document.documentElement.scrollHeight
   window.scrollTo({ top: totalHeight, behavior: 'smooth' })
 }
 
-const sendAnswer = (answer) => {
+const sendAnswer = async (answer) => {
   answerButtons.value = []
-  store.commit('addDialog', answer)
-  store.commit('setScores', answer.scores)
+  await store.commit('addDialog', answer)
+  await store.commit('setScores', answer.scores)
   addQuestion()
 }
 
@@ -75,12 +82,32 @@ watch(store.state.answers, () => {
 })
 
 onMounted(async () => {
-  await getQuestionData()
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  if (finished.value) {
+    const totalHeight = await document.documentElement.scrollHeight
+    window.scrollTo({ top: totalHeight })
+  } else {
+    await getQuestionData()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 })
 </script>
 <style lang="scss" scoped>
 @import "@/styles/main.scss";
+
+.answerButtons_btn {
+  animation: but-animation;
+  animation-duration: 500ms;
+}
+@keyframes but-animation {
+  from {
+    top: -100px;
+    opacity: 0;
+  }
+  to {
+    top: 0px;
+    opacity: 1;
+  }
+}
 
 .chatContainer {
   width: 100%;
@@ -112,16 +139,22 @@ onMounted(async () => {
     width: 90%;
     margin: 20px auto;
     @include media-sm {
-      width: 70px;
+      width: 80%;
     }
     @include media-md {
-      width: 60%;
+      width: 70%;
     }
     @include media-lg {
-      width: 50%;
+      width: 60%;
     }
     @include media-xl {
+      width: 50%;
+    }
+    @include media-xxl{
       width: 40%;
+    }
+    @include media-xxxl{
+      width: 30%;
     }
   }
   .answerButtons {
@@ -133,16 +166,22 @@ onMounted(async () => {
     justify-content: center;
     gap: 20px;
     @include media-sm {
-      width: 70px;
+      width: 80%;
     }
     @include media-md {
-      width: 60%;
+      width: 70%;
     }
     @include media-lg {
-      width: 50%;
+      width: 60%;
     }
     @include media-xl {
+      width: 50%;
+    }
+    @include media-xxl{
       width: 40%;
+    }
+    @include media-xxxl{
+      width: 30%;
     }
     &_btn {
       align-items: center;
@@ -167,9 +206,7 @@ onMounted(async () => {
       text-decoration: none;
       transition: box-shadow 0.15s, transform 0.15s;
       user-select: none;
-      -webkit-user-select: none;
       white-space: wrap;
-      will-change: box-shadow, transform;
       font-size: 18px;
       &:focus {
         box-shadow: #d6d6e7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px,
@@ -184,6 +221,25 @@ onMounted(async () => {
         box-shadow: #d6d6e7 0 3px 7px inset;
         transform: translateY(2px);
       }
+    }
+  }
+  .result {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50px);
+    z-index: 10;
+    outline: none;
+    text-decoration: none;
+    button {
+      display: block;
+      width: 100px;
+      padding: 10px;
+      border: none;
+      color: #fff;
+      background-color: $blue-hex;
+      border-radius: 17px;
     }
   }
 }

@@ -11,9 +11,14 @@ export default createStore({
       s: 0
     },
     dialogs: [],
-    answers: []
+    answers: [],
+    buttons: [],
+    finished: false
   },
   getters: {
+    getFinished (state) {
+      return state.finished
+    },
     getDialogs (state) {
       return state.dialogs
     },
@@ -42,9 +47,15 @@ export default createStore({
           return key
         }
       }
+    },
+    getButtons (state) {
+      return state.buttons
     }
   },
   mutations: {
+    finish (state) {
+      state.finished = true
+    },
     addAnswer (state, answer) {
       state.answers.push(answer)
     },
@@ -61,6 +72,9 @@ export default createStore({
       for (const key in scores) {
         state.scores[key] += scores[key]
       }
+    },
+    addButtons (state, buttons) {
+      state.buttons = buttons
     }
   },
   actions: {
